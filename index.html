@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dynamic Page Example</title>
+  <style>
+    .footnote {
+      display: none;
+    }
+    .footnote.active {
+      display: block;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>Dynamic Page Example</h1>
+  
+  <label for="input1">Input 1:</label>
+  <textarea id="input1" oninput="autoPopulateInputs()" placeholder="Enter text for Input 1"></textarea><br>
+
+  <label for="input2">Input 2:</label>
+  <textarea id="input2" placeholder="Enter text for Input 2"></textarea><br>
+
+  <label for="input3">Input 3:</label>
+  <textarea id="input3" placeholder="Enter text for Input 3"></textarea><br>
+
+  <label for="input4">Input 4:</label>
+  <textarea id="input4" placeholder="Enter text for Input 4"></textarea><br>
+
+  <button id="generateToggleBtn" onclick="toggleGenerateAllOutput1()">Generate All Output 1</button>
+  <button id="showFootnotesBtn" onclick="toggleShowFootnotes()">Show Footnotes</button>
+
+<div id="outputContainer"></div>
+<div id="collectedFootnotes" class="footnote-collected"></div>
+
+  <script>
+    var valuesArray = [
+      { input1: "123", input2: "value12", input3: "value13", input4: "value14" },
+      { input1: "456", input2: "value22", input3: "value23", input4: "value24" },
+      // Add more values as needed
+    ];
+
+    var generateAllOutput1Active = false;
+
+    function autoPopulateInputs() {
+      var input1Value = document.getElementById("input1").value;
+      var matchingValue = valuesArray.find(function(item) {
+        return item.input1 === input1Value;
+      });
+
+      if (matchingValue) {
+        document.getElementById("input2").value = matchingValue.input2;
+        document.getElementById("input3").value = matchingValue.input3;
+        document.getElementById("input4").value = matchingValue.input4;
+      } else {
+        document.getElementById("input2").value = "";
+        document.getElementById("input3").value = "";
+        document.getElementById("input4").value = "";
+      }
+    }
+
+    function toggleGenerateAllOutput1() {
+      generateAllOutput1Active = !generateAllOutput1Active;
+      var generateToggleBtn = document.getElementById("generateToggleBtn");
+      var outputContainer = document.getElementById("outputContainer");
+      
+      if (generateAllOutput1Active) {
+        generateToggleBtn.textContent = "Hide All Output 1";
+        outputContainer.innerHTML = ''; // Clear previous outputs
+
+        for (var i = 0; i < valuesArray.length; i++) {
+          var input1Value = valuesArray[i].input1;
+          var input2Value = valuesArray[i].input2;
+          var outputText = input1Value + input2Value;
+          displayOutput(outputText);
+        }
+      } else {
+        generateToggleBtn.textContent = "Generate All Output 1";
+        outputContainer.innerHTML = ''; // Clear outputs
+      }
+    }
+
+    var outputCount = 1;
+
+    function displayOutput(outputText) {
+      var outputContainer = document.getElementById("outputContainer");
+      var outputDiv = document.createElement("div");
+      var outputContent = document.createElement("p");
+      outputContent.textContent = outputText;
+      var footnoteLink = document.createElement("a");
+      footnoteLink.href = "#";
+      footnoteLink.textContent = " [^" + outputCount + "]";
+      var footnote = document.createElement("div");
+      footnote.id = "footnote" + outputCount;
+      footnote.className = "footnote";
+      footnote.innerHTML = "Footnote " + outputCount + ": " + outputText;
+      footnoteLink.addEventListener("click", function() {
+        toggleFootnote(footnote);
+      });
+      outputContent.appendChild(footnoteLink);
+      outputDiv.appendChild(outputContent);
+      outputDiv.appendChild(footnote);
+      outputContainer.appendChild(outputDiv);
+      outputCount++;
+    }
+
+    function toggleFootnote(footnote) {
+      footnote.classList.toggle("active");
+    }
+    
+    function toggleShowFootnotes() {
+  var showFootnotesBtn = document.getElementById("showFootnotesBtn");
+  var footnotes = document.querySelectorAll(".footnote");
+  
+  if (showFootnotesBtn.textContent === "Show Footnotes") {
+    showFootnotesBtn.textContent = "Hide Footnotes";
+    footnotes.forEach(function(footnote) {
+      footnote.style.display = "block";
+    });
+  } else {
+    showFootnotesBtn.textContent = "Show Footnotes";
+    footnotes.forEach(function(footnote) {
+      footnote.style.display = "none";
+    });
+  }
+}
+  // Initialize by hiding collected footnotes
+  document.getElementById("collectedFootnotes").style.display = "none";
+  </script>
+</body>
+</html>
